@@ -63,22 +63,26 @@ public class Node
 	 */
 	public int distanceTo(Node previous, Node other)
 	{
-		if (edges.length == 0 || this.equals(other))
-			return 0;
+		if (edges.length == 0)
+			return 10000000;
+		if (this.equals(other))
+				return 0;
 		
 		int[] costs = new int[edges.length];
 		
+		previous.visited = true;
+		
 		int lowestIndex = 0;
 		for (int index = 0; index < edges.length; index++)
-		{
-			if (edges[index].equals(previous)) continue;
+		{			
+			if (edges[index].visited) continue;
 			
 			costs[index] = edges[index].distanceTo(other);
 			
 			if (costs[index] < costs[lowestIndex])
 				lowestIndex = index;
 		}
-	
+			
 		return costs[lowestIndex] + 1;
 	}
 	
