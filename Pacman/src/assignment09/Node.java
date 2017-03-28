@@ -73,7 +73,7 @@ public class Node
 		{
 			if (edges[index].equals(previous)) continue;
 			
-			costs[index] = edges[index].distanceTo(this, other);
+			costs[index] = edges[index].distanceTo(other);
 			
 			if (costs[index] < costs[lowestIndex])
 				lowestIndex = index;
