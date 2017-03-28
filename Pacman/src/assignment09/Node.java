@@ -37,7 +37,7 @@ public class Node
 	
 	public boolean addEdge(Node edge)
 	{
-		if (isEdge(edge))
+		if (edge == null || isEdge(edge))
 			return false;
 		
 		edges = Arrays.copyOfRange(edges, 0, edges.length + 1);

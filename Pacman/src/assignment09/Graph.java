@@ -1,10 +1,10 @@
 package assignment09;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Iterator;
 
 /**
  * Represents a 2 dimensional graph using a Node subclass.
+ * Specifically used for Pacman path-finding (not generalized).
  * 
  * @author Jaden Simon
  *
@@ -55,5 +55,19 @@ public class Graph
 		}
 		
 		return null; // No path found
+	}
+	
+	public String toString()
+	{
+		String result = "";
+		
+		for (int yPos = 0; yPos < nodes[0].length; yPos++)
+		{
+			for (int xPos = 0; xPos < nodes.length; xPos++)
+				result += nodes[xPos][yPos] + " ";
+			result += "\n";
+		}
+		
+		return result;
 	}
 }
