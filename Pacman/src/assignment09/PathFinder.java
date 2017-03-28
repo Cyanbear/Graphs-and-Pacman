@@ -6,6 +6,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+/**
+ * Generates a solution to a given Pacman graph.
+ * 
+ * @author Jaden Simon and Jordan Newton
+ *
+ */
+
 public class PathFinder 
 {
 	/**

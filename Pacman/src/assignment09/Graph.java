@@ -7,7 +7,7 @@ import java.util.Arrays;
  * Represents a 2 dimensional graph using a Node subclass.
  * Specifically used for Pacman path-finding (not generalized).
  * 
- * @author Jaden Simon and
+ * @author Jaden Simon and Jordan Newton
  *
  */
 

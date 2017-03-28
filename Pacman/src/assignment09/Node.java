@@ -2,6 +2,13 @@ package assignment09;
 
 import java.util.Arrays;
 
+/**
+ * A Node to be used in a Graph.
+ * 
+ * @author Jaden Simon and Jordan Newton
+ *
+ */
+
 public class Node 
 {
 	private boolean visited;

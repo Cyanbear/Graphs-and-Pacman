@@ -9,7 +9,7 @@ import java.util.Random;
  * Generates a random Pacman maze to the specific fileName.
  * May or may not be solvable.
  * 
- * @author Jaden Simon and 
+ * @author Jaden Simon and Jordan Newton
  *
  */
 
