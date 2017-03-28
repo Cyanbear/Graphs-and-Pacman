@@ -1,17 +1,19 @@
 package assignment09;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class PathFinder 
 {
-	private static Node nodeFromChar(char character) throws IOException
+	private static Node nodeFromChar(int ID, char character) throws IOException
 	{	
 		for (PacmanGraphCharacter graphCharacter : PacmanGraphCharacter.values())
 		{
 			if (character == graphCharacter.getCharValue())
-				return new Node(graphCharacter.getIntValue());
+				return new Node(ID, graphCharacter.getIntValue());
 		}
 		
 		// String has no matching graph character; error.
@@ -21,6 +23,7 @@ public class PathFinder
 	
 	/**
 	 * Returns a grid of the Nodes read from the file.
+	 * Edges are also added to the Nodes while the file is being read.
 	 * 
 	 * @param fileName - file to read
 	 * 
@@ -38,7 +41,7 @@ public class PathFinder
 			
 			Node[][] grid = new Node[width][height];
 			
-			Node[] lastRow = new Node[width];
+			Node[] lastRow = new Node[width]; // Stores the previous row nodes
 			for (int yPos = 0; yPos < height; yPos++)
 			{
 				char[] rowValues = reader.readLine().toCharArray();
@@ -54,7 +57,7 @@ public class PathFinder
 				
 				for (int xPos = 0; xPos < width; xPos++)
 				{				
-					Node currentNode = nodeFromChar(rowValues[xPos]);
+					Node currentNode = nodeFromChar(xPos + (yPos * width), rowValues[xPos]);
 					
 					// Make sure side nodes are only walls
 					if (yPos == 0 || yPos == height - 1 || xPos == 0 || xPos == width - 1)
@@ -68,8 +71,8 @@ public class PathFinder
 					// because Pacman cannot traverse through walls
 					if (currentNode.getValue() != PacmanGraphCharacter.WALL.getIntValue())
 					{
-						currentNode.addEdge(lastNode);
-						currentNode.addEdge(lastRow[xPos]);
+						currentNode.addEdge(lastRow[xPos]); // North first
+						currentNode.addEdge(lastNode); // West
 						lastNode = currentNode;
 						lastRow[xPos] = currentNode;
 					} else 
@@ -94,6 +97,28 @@ public class PathFinder
 			return null;
 		}
 	}
+	/**
+	 * Writes a (Pacman) Graph to a file.
+	 * 
+	 * @param fileName - name of the file to write to
+	 * @param output   - graph to use 
+	 */
+	private static void writeFile(String fileName, Graph output)
+	{
+		try
+		{
+			PrintWriter writer = new PrintWriter(new File(fileName));
+			
+			writer.print(output);
+			
+			writer.close();
+		} catch (IOException error)
+		{
+			System.out.println("Something went wrong writing to " + fileName);
+			error.printStackTrace();
+			System.exit(1);
+		}
+	}
 	
 	public static void solveMaze(String inputFileName, String outputFileName)
 	{
@@ -114,18 +139,18 @@ public class PathFinder
 				else if (current.getValue() == PacmanGraphCharacter.START.getIntValue())
 					start = current;
 			}
-		
-		System.out.println(start.distanceTo(goal));
-		
+						
 		System.out.println("Unsolved graph: ");
 		System.out.println(graph);
 		
 		System.out.println("Solved graph: " + graph.breadthFirstSearch(start, goal));
 		System.out.println(graph);
+		
+		writeFile(outputFileName, graph);
 	}
 	
 	public static void main(String[] args)
 	{
-		solveMaze("TestFiles\\test1.txt", "xxx.txt");
+		solveMaze("TestFiles\\test1.txt", "TestFiles\\test1Output.txt");
 	}
 }

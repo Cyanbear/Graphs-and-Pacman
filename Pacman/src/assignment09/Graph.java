@@ -1,6 +1,5 @@
 package assignment09;
 import java.util.ArrayDeque;
-import java.util.Iterator;
 
 /**
  * Represents a 2 dimensional graph using a Node subclass.
@@ -32,21 +31,61 @@ public class Graph
 	}
 	
 	/**
-	 * Dijkstra's algorithm.
-	 * Similar to breadth first search but guarantees a shortest path.
+	 * Uses a GOAL node to build a path from it.
+	 * 
+	 * @param goal - node to build from
+	 * 
+	 * @return the length of the path
+	 */
+	private int buildPath(Node goal)
+	{
+		int pathLength = 0;
+		Node current = goal;
+		
+		while(true)
+		{
+			current = current.getParent();
+			pathLength++;
+			
+			if (current.getParent() == null) 
+				return pathLength; // Found the start
+			
+			current.setValue(PacmanGraphCharacter.PATH.getIntValue());
+		}
+	}
+	
+	/**
+	 * Depth-first search. The first path found that leads to the goal is
+	 * returned. 
 	 * 
 	 * @param start - start node
 	 * @param goal - goal node
 	 * 
 	 * @return the length of the path
 	 */
+	public int depthFirstSearch(Node start, Node goal)
+	{
+		// TODO: need to fix this algorithm
+		if (start.equals(goal))
+			return buildPath(start);
+		
+		start.setVisited(true);
+		
+		for (Node neighbor : start.getEdges())
+			if (!neighbor.isVisited())
+			{
+				neighbor.setParent(start);
+				
+				return depthFirstSearch(neighbor, goal); // Recursion
+			}
+				
+		return -1; // No path
+	}
 	
 	/**
 	 * Searches the Graph, starting from start and finding goal.
 	 * Once found, the values of the path-nodes are overwritten with
 	 * whatever character PATH is defined in PacmanGraphCharacter.java.
-	 * 
-	 * DOES NOT GUARANTEE A SHORTEST PATH
 	 * 
 	 * @param start - start node
 	 * @param goal - goal node
@@ -71,25 +110,12 @@ public class Graph
 			
 			// Found goal, backtrack to create a path.
 			if (current == goal)
-			{	
-				int pathLength = 0;
-				
-				while(true)
-				{
-					current = current.getParent();
-					pathLength++;
-					
-					if (current.getParent() == null) 
-						return pathLength; // Found the start
-					
-					current.setValue(PacmanGraphCharacter.PATH.getIntValue());
-				}
-			}
+				return buildPath(current);
 			
 			for (Node neighbor : current.getEdges())
 				if(!neighbor.isVisited())
 				{
-					queue.add(neighbor);
+					queue.addFirst(neighbor);
 					neighbor.setParent(current);
 					neighbor.setVisited(true);
 				}
@@ -105,7 +131,7 @@ public class Graph
 		for (int yPos = 0; yPos < nodes[0].length; yPos++)
 		{
 			for (int xPos = 0; xPos < nodes.length; xPos++)
-				result += nodes[xPos][yPos] + " ";
+				result += nodes[xPos][yPos];
 			result += "\n";
 		}
 		
