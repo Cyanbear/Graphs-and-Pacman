@@ -1,11 +1,13 @@
 package assignment09;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Represents a 2 dimensional graph using a Node subclass.
  * Specifically used for Pacman path-finding (not generalized).
  * 
- * @author Jaden Simon
+ * @author Jaden Simon and
  *
  */
 
@@ -13,7 +15,7 @@ import java.util.ArrayDeque;
 public class Graph 
 {		
 	Node[][] nodes; // Nodes are stored in a 2-D array, though they are
-				    // not traversed using it.
+				    // only traversed using the array when outputting as a String.
 	
 	public Graph() { this(10, 10); }
 	
@@ -22,6 +24,13 @@ public class Graph
 		this.nodes = new Node[xSize][ySize];
 	}
 	
+	/**
+	 * Adds a Node to the Graph at the given position.
+	 * 
+	 * @param newNode- node to add
+	 * @param posX   - x position
+	 * @param posY   - y position
+	 */
 	public void addNode(Node newNode, int posX, int posY)
 	{
 		if (nodes[posX][posY] != null) // Node already exists, just replace the value.
@@ -55,29 +64,118 @@ public class Graph
 	}
 	
 	/**
+	 * Distance function for Graph nodes. Uses Node IDs.
+	 * 
+	 * @param node1
+	 * @param node2
+	 * 
+	 * @return cost to move
+	 */
+	private int AStarCostMethod(Node node1, Node node2)
+	{
+		int node1PosX = node1.getID() % nodes.length;
+		int node2PosX = node2.getID() % nodes.length;		
+		int node1PosY = node1.getID() / nodes.length;
+		int node2PosY = node2.getID() / nodes.length;
+		
+		return Math.abs(node2PosX - node1PosX) + Math.abs(node2PosY - node1PosY);
+	}
+	
+	/**
+	 * A* algorithm. Uses a heuristic function to find the distance between nodes.
+	 * This is a best-first search algorithm.
+	 * 
+	 * @param start - start node
+	 * @param goal  - goal node
+	 * 
+	 * @return the length of the path
+	 */
+	public int AStarSearch(Node start, Node goal)
+	{
+		int graphSize = nodes.length * nodes[0].length;
+		int[] gScore = new int[graphSize];
+		int[] fScore = new int[graphSize];
+		
+		Arrays.fill(gScore, Integer.MAX_VALUE);
+		Arrays.fill(fScore, Integer.MAX_VALUE);
+		
+		// Using an ArrayList as our priority queue.
+		ArrayList<Node> queue = new ArrayList<> (graphSize);
+		
+		// Start with the start node
+		queue.add(start);
+		gScore[start.getID()] = 0;
+		fScore[start.getID()] = AStarCostMethod(start, goal);
+		
+		// While our queue has nodes
+		while(queue.size() != 0)
+		{						
+			Node current = queue.remove(queue.size() - 1);
+			
+			if (current.equals(goal))
+				return buildPath(current);
+			
+			current.setVisited(true);
+			
+			// For every unvisited neighbor of current,
+			// calculate their fScore and gScores and add them to the queue
+			// if they are viable options.
+			for (Node neighbor : current.getEdges())
+				if (!neighbor.isVisited())
+				{					
+					int tentativeGScore = gScore[current.getID()] + 1;
+					
+					if (tentativeGScore >= gScore[neighbor.getID()]) continue;
+					
+					neighbor.setParent(current);
+					gScore[neighbor.getID()] = tentativeGScore;
+					fScore[neighbor.getID()] = tentativeGScore + AStarCostMethod(neighbor, goal);
+										
+					// Add this new node to queue, sorting by fScore (descending order).
+					int stopIndex = 0;
+					
+					while (stopIndex < queue.size())
+						if (fScore[queue.get(stopIndex++).getID()] <= fScore[neighbor.getID()])
+							break;
+					
+					if (stopIndex == queue.size())
+						queue.add(neighbor);
+					else if (stopIndex == 0)
+						queue.add(0, neighbor);
+					else
+						queue.add(stopIndex - 1, neighbor);					
+				}
+		}
+		
+		return -1; // No path
+	}
+	
+	/**
 	 * Depth-first search. The first path found that leads to the goal is
 	 * returned. 
 	 * 
 	 * @param start - start node
-	 * @param goal - goal node
+	 * @param goal  - goal node
 	 * 
 	 * @return the length of the path
 	 */
 	public int depthFirstSearch(Node start, Node goal)
 	{
-		// TODO: need to fix this algorithm
 		if (start.equals(goal))
 			return buildPath(start);
 		
 		start.setVisited(true);
 		
 		for (Node neighbor : start.getEdges())
+		{
 			if (!neighbor.isVisited())
 			{
 				neighbor.setParent(start);
 				
-				return depthFirstSearch(neighbor, goal); // Recursion
+				int path = depthFirstSearch(neighbor, goal);
+				if (path != -1) return path;
 			}
+		}
 				
 		return -1; // No path
 	}
@@ -88,7 +186,7 @@ public class Graph
 	 * whatever character PATH is defined in PacmanGraphCharacter.java.
 	 * 
 	 * @param start - start node
-	 * @param goal - goal node
+	 * @param goal  - goal node
 	 * 
 	 * @return the length of the path
 	 */
@@ -131,8 +229,9 @@ public class Graph
 		for (int yPos = 0; yPos < nodes[0].length; yPos++)
 		{
 			for (int xPos = 0; xPos < nodes.length; xPos++)
-				result += nodes[xPos][yPos];
-			result += "\n";
+				result += nodes[xPos][yPos].toGraphString();
+			if (yPos < nodes[0].length - 1)
+				result += "\n";
 		}
 		
 		return result;
