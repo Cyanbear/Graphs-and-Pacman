@@ -3,7 +3,6 @@ package assignment09;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
 
 public class PathFinder 
 {
@@ -20,7 +19,14 @@ public class PathFinder
 		throw new IOException("Invalid character used!");
 	}
 	
-	private static Graph readFile(String fileName)
+	/**
+	 * Returns a grid of the Nodes read from the file.
+	 * 
+	 * @param fileName - file to read
+	 * 
+	 * @return grid of nodes
+	 */
+	private static Node[][] readFile(String fileName)
 	{
 		try 
 		{
@@ -30,7 +36,7 @@ public class PathFinder
 			int height = Integer.parseInt(dimensions[0]);
 			int width = Integer.parseInt(dimensions[1]);
 			
-			Graph graph = new Graph(width, height);
+			Node[][] grid = new Node[width][height];
 			
 			Node[] lastRow = new Node[width];
 			for (int yPos = 0; yPos < height; yPos++)
@@ -58,26 +64,27 @@ public class PathFinder
 							throw new IOException("Graph sides should exclusively be made of wall characters.");
 						}
 					
-					// Wall nodes do not have any paths away from it, because Pacman cannot traverse through walls
+					// Wall nodes do not have any edges away from it
+					// because Pacman cannot traverse through walls
 					if (currentNode.getValue() != PacmanGraphCharacter.WALL.getIntValue())
 					{
-						currentNode.addEdge(lastRow[xPos]);
 						currentNode.addEdge(lastNode);
-						lastRow[xPos] = currentNode;
+						currentNode.addEdge(lastRow[xPos]);
 						lastNode = currentNode;
+						lastRow[xPos] = currentNode;
 					} else 
 					{
-						lastRow[xPos] = null;
 						lastNode = null;
+						lastRow[xPos] = null;
 					}
 					
-					graph.addNode(currentNode, xPos, yPos);
+					grid[xPos][yPos] = currentNode;
 				}
 			}
 					
 			reader.close();
 			
-			return graph;
+			return grid;
 		} catch (IOException error) 
 		{
 			System.out.println("Something went wrong reading " + fileName);
@@ -90,17 +97,31 @@ public class PathFinder
 	
 	public static void solveMaze(String inputFileName, String outputFileName)
 	{
-		Graph graph = readFile(inputFileName);
+		Node[][] grid = readFile(inputFileName);
+		Node start = null;
+		Node goal = null;
+		Graph graph = new Graph(grid.length, grid[0].length);
 		
+		for (int xPos = 0; xPos < grid.length; xPos++)
+			for (int yPos = 0; yPos < grid[0].length; yPos++)
+			{
+				Node current = grid[xPos][yPos];
+				
+				graph.addNode(current, xPos, yPos);
+				
+				if (current.getValue() == PacmanGraphCharacter.GOAL.getIntValue())
+					goal = current;
+				else if (current.getValue() == PacmanGraphCharacter.START.getIntValue())
+					start = current;
+			}
+		
+		System.out.println(start.distanceTo(goal));
+		
+		System.out.println("Unsolved graph: ");
 		System.out.println(graph);
 		
-		Iterator<Node> path = graph.breadthFirstSearch(graph.nodes[1][1], graph.nodes[4][4]);
-		
-		if (path != null)
-			while (path.hasNext())
-				System.out.println(path.next());
-		else
-			System.out.println("Path not found!");
+		System.out.println("Solved graph: " + graph.breadthFirstSearch(start, goal));
+		System.out.println(graph);
 	}
 	
 	public static void main(String[] args)

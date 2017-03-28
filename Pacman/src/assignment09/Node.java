@@ -7,6 +7,7 @@ public class Node
 	private boolean visited;
 	private int value;
 	private Node[] edges;
+	private Node parent; // Used for backtracking in breadth first search
 	
 	public Node() { this(0); }
 	
@@ -24,7 +25,13 @@ public class Node
 	
 	public int getValue() { return value; }
 	
+	public void setEdges(Node[] _edges) { edges = _edges;}
+	
 	public Node[] getEdges() { return edges; }
+	
+	public void setParent(Node _parent) {parent = _parent;}
+	
+	public Node getParent() { return parent; }
 	
 	public boolean isEdge(Node edge)
 	{
@@ -48,8 +55,40 @@ public class Node
 		return true;
 	}
 	
+	/**
+	 * @param other
+	 * 
+	 * @return distance between this node and another node
+	 * 		   returns a very large int if impossible
+	 */
+	public int distanceTo(Node previous, Node other)
+	{
+		if (edges.length == 0 || this.equals(other))
+			return 0;
+		
+		int[] costs = new int[edges.length];
+		
+		int lowestIndex = 0;
+		for (int index = 0; index < edges.length; index++)
+		{
+			if (edges[index].equals(previous)) continue;
+			
+			costs[index] = edges[index].distanceTo(this, other);
+			
+			if (costs[index] < costs[lowestIndex])
+				lowestIndex = index;
+		}
+	
+		return costs[lowestIndex] + 1;
+	}
+	
+	public int distanceTo(Node other)
+	{
+		return distanceTo(this, other);
+	}
+	
 	public String toString()
 	{
-		return "" + value;
+		return "" + ((char) value);
 	}
 }

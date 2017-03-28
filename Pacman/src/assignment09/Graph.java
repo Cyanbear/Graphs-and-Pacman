@@ -13,7 +13,8 @@ import java.util.Iterator;
 
 public class Graph 
 {		
-	Node[][] nodes;
+	Node[][] nodes; // Nodes are stored in a 2-D array, though they are
+				    // not traversed using it.
 	
 	public Graph() { this(10, 10); }
 	
@@ -30,12 +31,37 @@ public class Graph
 			nodes[posX][posY] = newNode;	
 	}
 	
-	public Iterator<Node> breadthFirstSearch(Node start, Node goal)
+	/**
+	 * Dijkstra's algorithm.
+	 * Similar to breadth first search but guarantees a shortest path.
+	 * 
+	 * @param start - start node
+	 * @param goal - goal node
+	 * 
+	 * @return the length of the path
+	 */
+	
+	/**
+	 * Searches the Graph, starting from start and finding goal.
+	 * Once found, the values of the path-nodes are overwritten with
+	 * whatever character PATH is defined in PacmanGraphCharacter.java.
+	 * 
+	 * DOES NOT GUARANTEE A SHORTEST PATH
+	 * 
+	 * @param start - start node
+	 * @param goal - goal node
+	 * 
+	 * @return the length of the path
+	 */
+	public int breadthFirstSearch(Node start, Node goal)
 	{
-		if (start == null)
-			start = nodes[0][0];
+		if (start == null || goal == null)
+		{
+			System.out.println("Start or goal is missing from the graph!");
+			System.exit(1);
+		}
 		
-		ArrayDeque<Node> queue= new ArrayDeque<>();
+		ArrayDeque<Node> queue = new ArrayDeque<>();
 		queue.add(start);
 		start.setVisited(true);
 		
@@ -43,18 +69,33 @@ public class Graph
 		{
 			Node current = queue.removeLast();
 			
+			// Found goal, backtrack to create a path.
 			if (current == goal)
-				return queue.iterator();
+			{	
+				int pathLength = 0;
+				
+				while(true)
+				{
+					current = current.getParent();
+					pathLength++;
+					
+					if (current.getParent() == null) 
+						return pathLength; // Found the start
+					
+					current.setValue(PacmanGraphCharacter.PATH.getIntValue());
+				}
+			}
 			
 			for (Node neighbor : current.getEdges())
 				if(!neighbor.isVisited())
 				{
 					queue.add(neighbor);
+					neighbor.setParent(current);
 					neighbor.setVisited(true);
 				}
 		}
 		
-		return null; // No path found
+		return -1; // No path
 	}
 	
 	public String toString()
