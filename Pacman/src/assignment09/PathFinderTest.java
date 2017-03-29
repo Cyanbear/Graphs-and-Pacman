@@ -29,13 +29,27 @@ public class PathFinderTest
 		List<String> file1Lines = Files.readAllLines(file1.toPath());
 		List<String> file2Lines = Files.readAllLines(file2.toPath());
 		
+		int path1Count = 0;
+		int path2Count = 0;
+		
 		for (int index = 0; index < file1Lines.size(); index++)
 		{
-			if (!file1Lines.get(index).equals(file2Lines.get(index)))
-				return false;
+			path1Count += countDotsInString(file1Lines.get(index));
+			path2Count += countDotsInString(file2Lines.get(index));
 		}
 		
-		return true;
+		return path1Count == path2Count;
+	}
+	
+	private int countDotsInString(String line)
+	{
+		int count = 0;
+		
+		for (int pos = 0; pos < line.length(); pos++)
+			if (line.charAt(pos) == PacmanGraphCharacter.PATH.getCharValue())
+				count++;
+		
+		return count;
 	}
 	
 	private File getFileFromArray(File[] files, String fileName)
