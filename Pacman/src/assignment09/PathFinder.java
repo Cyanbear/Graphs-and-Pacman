@@ -34,7 +34,7 @@ public class PathFinder
 		
 		// String has no matching graph character; error.
 		
-		throw new IOException("Invalid File Format");
+		throw new IOException("Illegal File Format");
 	}
 	
 	/**
