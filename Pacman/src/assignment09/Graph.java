@@ -71,14 +71,14 @@ public class Graph
 	 * 
 	 * @return cost to move
 	 */
-	private int AStarCostMethod(Node node1, Node node2)
+	public int manhattanDistance(Node node1, Node node2)
 	{
 		int node1PosX = node1.getID() % nodes.length;
 		int node2PosX = node2.getID() % nodes.length;		
 		int node1PosY = node1.getID() / nodes.length;
 		int node2PosY = node2.getID() / nodes.length;
 		
-		return (Math.abs(node2PosX - node1PosX) + Math.abs(node2PosY - node1PosY)) * 1001;
+		return (Math.abs(node2PosX - node1PosX) + Math.abs(node2PosY - node1PosY));
 	}
 	
 	/**
@@ -109,7 +109,7 @@ public class Graph
 		// Start with the start node
 		queue.add(start);
 		gScore[start.getID()] = 0;
-		fScore[start.getID()] = AStarCostMethod(start, goal);
+		fScore[start.getID()] = manhattanDistance(start, goal) * 1001;
 		
 		// While our queue has nodes
 		while(queue.size() != 0)
@@ -133,7 +133,7 @@ public class Graph
 					
 					neighbor.setParent(current);
 					gScore[neighbor.getID()] = tentativeGScore;
-					fScore[neighbor.getID()] = tentativeGScore + AStarCostMethod(neighbor, goal);
+					fScore[neighbor.getID()] = tentativeGScore + manhattanDistance(neighbor, goal) * 1001;
 										
 					// Add this new node to queue, sorting by fScore (descending order).
 					int stopIndex = 0;
@@ -224,6 +224,20 @@ public class Graph
 		}
 		
 		return -1; // No path
+	}
+	
+	/** 
+	 * @return the total amount of times a Node was looked at
+	 */
+	public int visitedCount()
+	{
+		int total = 0;
+		
+		for (int yPos = 0; yPos < nodes[0].length; yPos++)
+			for (int xPos = 0; xPos < nodes.length; xPos++)
+				total += nodes[xPos][yPos].getCheckCount();
+		
+		return total;
 	}
 	
 	public String toString()

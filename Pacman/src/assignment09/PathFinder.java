@@ -176,13 +176,15 @@ public class PathFinder
 		System.out.println("Solved graph: " + graph.breadthFirstSearch(start, goal));
 		System.out.println(graph + "\n");
 		System.out.println("Took " + (System.nanoTime() - startTime) / 1e6 + " milliseconds.");
+		System.out.println("A total of " + graph.visitedCount() + " Nodes were checked.");
+		System.out.println("The distance between the goal and the start is " + graph.manhattanDistance(goal, start));
 		
 		writeFile(outputFileName, graph);
 	}
 	
 	public static void main(String[] args)
 	{
-		//MazeGenerator.generateMaze("TestFiles\\test4.txt", 250, 250, 0.2);
-		solveMaze("TestFiles\\test2.txt", "TestFiles\\test2Output.txt");
+		//MazeGenerator.generateMaze("TestFiles/smallestMaze.txt", 3, 4, 0);
+		solveMaze("TestFiles/smallestMaze.txt", "TestFiles/smallestMazeSol.txt");
 	}
 }

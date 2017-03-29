@@ -12,6 +12,7 @@ import java.util.Arrays;
 public class Node 
 {
 	private boolean visited;
+	private int checkCount; // Counts how many this Node has been looked at
 	private int value;
 	private int ID;
 	private Node[] edges;
@@ -31,7 +32,11 @@ public class Node
 	// Could of just been made public , but that's not OOP!
 	public void setVisited(boolean _visited) { visited = _visited; }
 	
-	public boolean isVisited() { return visited; }
+	public boolean isVisited() 
+	{ 	
+		checkCount++;
+		return visited; 
+	}
 	
 	public void setValue(int _value) { value = _value; }
 	
@@ -46,6 +51,8 @@ public class Node
 	public Node getParent() { return parent; }
 	
 	public int getID() { return ID; }
+	
+	public int getCheckCount() { return checkCount; }
 	
 	/**
 	 * @param edge - edge to check

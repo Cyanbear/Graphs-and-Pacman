@@ -47,7 +47,7 @@ public class MazeGenerator
 						grid[xPos][yPos] = PacmanGraphCharacter.WALL.getCharValue();
 					else 
 					{
-						grid[xPos][yPos] = (generator.nextInt(1000) > (int)(wallChance * 1000)) ? 
+						grid[xPos][yPos] = (generator.nextInt(1000) >= (int)(wallChance * 1000)) ? 
 											PacmanGraphCharacter.SPACE.getCharValue() :
 											PacmanGraphCharacter.WALL.getCharValue();
 					}
