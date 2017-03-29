@@ -173,7 +173,7 @@ public class PathFinder
 		
 		double startTime = System.nanoTime();
 		
-		System.out.println("Solved graph: " + graph.AStarSearch(start, goal));
+		System.out.println("Solved graph: " + graph.breadthFirstSearch(start, goal));
 		System.out.println(graph + "\n");
 		System.out.println("Took " + (System.nanoTime() - startTime) / 1e6 + " milliseconds.");
 		

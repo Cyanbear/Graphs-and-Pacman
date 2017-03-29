@@ -78,12 +78,16 @@ public class Graph
 		int node1PosY = node1.getID() / nodes.length;
 		int node2PosY = node2.getID() / nodes.length;
 		
-		return Math.abs(node2PosX - node1PosX) + Math.abs(node2PosY - node1PosY);
+		return (Math.abs(node2PosX - node1PosX) + Math.abs(node2PosY - node1PosY)) * 1001;
 	}
 	
 	/**
 	 * A* algorithm. Uses a heuristic function to find the distance between nodes.
 	 * This is a best-first search algorithm.
+	 * 
+	 * In this implementation of the algorithm, the cost of moving from one node to the next is
+	 * 1000, while the estimated cost from moving from one node to another is the Manhattan distance
+	 * times 1001. 
 	 * 
 	 * @param start - start node
 	 * @param goal  - goal node
@@ -123,7 +127,7 @@ public class Graph
 			for (Node neighbor : current.getEdges())
 				if (!neighbor.isVisited())
 				{					
-					int tentativeGScore = gScore[current.getID()] + 1;
+					int tentativeGScore = gScore[current.getID()] + 1000;
 					
 					if (tentativeGScore >= gScore[neighbor.getID()]) continue;
 					
