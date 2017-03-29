@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -27,15 +29,22 @@ public class PathFinderTest
 		List<String> file1Lines = Files.readAllLines(file1.toPath());
 		List<String> file2Lines = Files.readAllLines(file2.toPath());
 		
-		if (file1Lines.size() == file2Lines.size())
+		for (int index = 0; index < file1Lines.size(); index++)
 		{
-			for (int index = 0; index < file1Lines.size(); index++)
-				if (!file1Lines.get(index).equals(file2Lines.get(index)))
-					return false;
+			if (!file1Lines.get(index).equals(file2Lines.get(index)))
+				return false;
 		}
-		else return false;
 		
 		return true;
+	}
+	
+	private File getFileFromArray(File[] files, String fileName)
+	{
+		for (int index = 0; index < files.length; index++)
+			if (files[index].getName().equals(fileName))
+				return files[index];
+		
+		return null;
 	}
 	
 	@Test
@@ -51,12 +60,15 @@ public class PathFinderTest
 			for (File file : testFiles)
 			{
 				// Found file to test
-				if (!file.getName().contentEquals("Sol"))
+				if (!file.getName().endsWith("Sol.txt"))
 				{
-					System.out.println(file.getName());
-					PathFinder.solveMaze(file.getPath(), "JUnitTestMazes\\temp.txt");
-					File output = new File("JUnitTestMazes\\temp.txt");
-					File solution = new File("JUnitTestMazes\\" + file.getName() + "Sol");
+					System.out.println("Testing " + file.getPath() + "\n");
+					
+					PathFinder.solveMaze(file.getPath(), "temp.txt");
+					File output = new File("temp.txt");
+					File solution = getFileFromArray(testFiles, 
+							file.getName().substring(0, file.getName().length() - 4) + "Sol.txt");
+					
 					assert(compareFiles(output, solution));
 				}
 			}

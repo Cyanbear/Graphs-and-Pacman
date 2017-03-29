@@ -127,7 +127,7 @@ public class PathFinder
 			
 			// Output the graph
 			writer.print(output.nodes[0].length + " " + output.nodes.length + "\n");
-			writer.print(output);
+			writer.print(output + "\n");
 			
 			writer.close();
 		} catch (IOException error)
