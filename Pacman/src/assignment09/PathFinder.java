@@ -15,6 +15,12 @@ import java.io.PrintWriter;
 
 public class PathFinder 
 {
+	final static int BREADTH_FIRST_SEARCH = 1;
+	final static int DEPTH_FIRST_SEARCH = 2;
+	final static int A_STAR_SEARCH = 3;	
+	
+	static int searchType = BREADTH_FIRST_SEARCH;
+	
 	/**
 	 * Creates a new Node form the given character.
 	 * 
@@ -26,6 +32,10 @@ public class PathFinder
 	 */
 	private static Node nodeFromChar(int ID, char character) throws IOException
 	{	
+		// Path characters should not be in the input file!
+		if (character == PacmanGraphCharacter.PATH.getCharValue())
+			throw new IOException("Illegal File Format");
+		
 		for (PacmanGraphCharacter graphCharacter : PacmanGraphCharacter.values())
 		{
 			if (character == graphCharacter.getCharValue())
@@ -173,18 +183,26 @@ public class PathFinder
 		
 		double startTime = System.nanoTime();
 		
-		System.out.println("Solved graph: " + graph.breadthFirstSearch(start, goal));
+		System.out.print("Solved graph: ");
+		
+		// Solve the graph depending on the search type
+		switch(searchType)
+		{
+		case BREADTH_FIRST_SEARCH : System.out.println(graph.breadthFirstSearch(start, goal));
+									break;
+		case DEPTH_FIRST_SEARCH : 	System.out.println(graph.depthFirstSearch(start, goal));
+									break;
+		case A_STAR_SEARCH : 	 	System.out.println(graph.AStarSearch(start, goal));
+									break;
+		default :					System.out.print("INVALID SEARCH TYPE!");
+									return;
+		}
+		
 		System.out.println(graph + "\n");
 		System.out.println("Took " + (System.nanoTime() - startTime) / 1e6 + " milliseconds.");
 		System.out.println("A total of " + graph.visitedCount() + " Nodes were checked.");
 		System.out.println("The distance between the goal and the start is " + graph.manhattanDistance(goal, start));
 		
 		writeFile(outputFileName, graph);
-	}
-	
-	public static void main(String[] args)
-	{
-		//MazeGenerator.generateMaze("TestFiles/smallestMaze.txt", 3, 4, 0);
-		solveMaze("TestFiles/smallestMaze.txt", "TestFiles/smallestMazeSol.txt");
 	}
 }

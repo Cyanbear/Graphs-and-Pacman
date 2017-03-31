@@ -16,9 +16,19 @@ public class Graph
 {		
 	Node[][] nodes; // Nodes are stored in a 2-D array, though they are
 				    // only traversed using the array when outputting as a String.
+					// The search algorithms DO NOT use an array to traverse the graph!
 	
+	/**
+	 * Default Graph constructor.
+	 */
 	public Graph() { this(10, 10); }
 	
+	/**
+	 * Graph constructor.
+	 * 
+	 * @param xSize - width of the Graph
+	 * @param ySize - height of the Graph
+	 */
 	public Graph(int xSize, int ySize)
 	{
 		this.nodes = new Node[xSize][ySize];
@@ -195,14 +205,9 @@ public class Graph
 	 * @return the length of the path
 	 */
 	public int breadthFirstSearch(Node start, Node goal)
-	{
-		if (start == null || goal == null)
-		{
-			System.out.println("Start or goal is missing from the graph!");
-			System.exit(1);
-		}
-		
-		ArrayDeque<Node> queue = new ArrayDeque<>();
+	{		
+		ArrayDeque<Node> queue = new ArrayDeque<>(); // ArrayDeque is far better than LinkedList
+													 // for iterations, faster too.
 		queue.add(start);
 		start.setVisited(true);
 		
@@ -240,6 +245,9 @@ public class Graph
 		return total;
 	}
 	
+	/**
+	 * @return the graph in String representation
+	 */
 	public String toString()
 	{
 		String result = "";

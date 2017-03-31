@@ -18,9 +18,16 @@ public class Node
 	private Node[] edges;
 	private Node parent; // Used for backtracking 
 	
+	// Default constructors.
 	public Node() { this(0, 0); }
 	public Node(int _ID) { this(_ID, 0); }
 	
+	/**
+	 * Node constructor.
+	 * 
+	 * @param _ID    - ID of the node
+	 * @param _value - value of the node
+	 */
 	public Node(int _ID, int _value)
 	{
 		this.edges = new Node[0];
@@ -97,6 +104,9 @@ public class Node
 		return "" + (char) value;
 	}
 	
+	/**
+	 * @return the node ID with each of its edges' IDs
+	 */
 	public String toString()
 	{
 		String string = "(Node ID: " + ID + " | Edges: ";
